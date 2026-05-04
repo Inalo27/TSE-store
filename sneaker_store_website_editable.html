@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thee Scholar Enterprise</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: black; color: white; }
+    header { text-align: center; padding: 20px; }
+    h1 { color: gold; }
+    .tagline { color: #d4af37; }
+    .container { padding: 20px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+    .card { background: #111; padding: 15px; border-radius: 10px; }
+    img { width: 100%; border-radius: 10px; }
+    button { background: gold; border: none; padding: 10px; width: 100%; margin-top: 10px; cursor: pointer; }
+    select, input { width: 100%; padding: 8px; margin-top: 5px; }
+    .cart { margin-top: 30px; }
+    .checkout { background: green; color: black; text-align: center; padding: 12px; display: block; margin-top: 20px; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>THEE SCHOLAR ENTERPRISE</h1>
+  <p class="tagline">Tailored for a scholar by thee scholar</p>
+</header>
+
+<div class="container">
+
+  <input type="text" id="customerNumber" placeholder="Enter your phone number">
+
+  <div class="grid" id="products"></div>
+
+  <div class="cart">
+    <h2>Cart</h2>
+    <div id="cartItems"></div>
+    <p id="total"></p>
+    <a id="checkoutBtn" class="checkout" target="_blank">Checkout via WhatsApp</a>
+  </div>
+
+</div>
+
+<script>
+const WHATSAPP_NUMBER = "27630133236";
+
+const products = [
+  { id: 1, name: "Nike Air Force 1 white" , price: 1000, image: "https://th.bing.com/th/id/OIP.XnEXrJuXwhJOnry9cozNvwHaEX?w=297&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3", sizes: [3,4,5,6,7,8,9] },
+  { id: 2, name: "Nike Shox R4", price: 1350, image: "https://th.bing.com/th/id/OIP.CVWbY4-JQJVyCA3rIRX6kAHaFL?w=170&h=150&c=6&o=7&dpr=1.3&pid=1.7&rm=3", sizes: [3,4,5,6,7,8,9,] },
+  { id: 3, name: "Adidas Drop Step" , price: 1200, image: "https://th.bing.com/th/id/OIP.X5Dvwna-bM-qPdXFj7KgEQHaE1?w=294&h=193&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3", sizes: [3,4,5,6,7,8,9] },
+  { id: 4, name: "Timberland boots" , price: 1700, image: "https://th.bing.com/th/id/OIP.JqgkiXuN8IlhIJc44kJLYQHaHa?w=172&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3", sizes: [3,4,5,6,7,8,9] },
+  { id: 5, name: "Nike Shox TL" , price: 1200, image: "https://th.bing.com/th/id/OIP.jljU40WwBBadU-gQWp0bBwHaFS?w=234&h=150&c=6&o=7&dpr=1.3&pid=1.7&rm=3", sizes: [3,4,5,6,7,8,9] },
+  { id: 6, name: "Woman`s Puma" , price: 1100, image: "https://th.bing.com/th/id/OIP.yxzQapRcgym5oc_P9pxFGQHaHa?w=221&h=220&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3", sizes: [3,4,5,6,7,8,9] },
+  { id: 7, name: "Nike Air Max Plus" , price: 1200, image: "https://th.bing.com/th/id/OIP.0mbERXA9_H1OoYozZCdnMwHaHa?w=192&h=192&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3", sizes: [3,4,5,6,7,8,9] },
+  { id: 8, name: "Nike P-6000" , price: 1200, image: "https://th.bing.com/th/id/OIP.j_I411MZq4wCQki5zgYtMgHaHa?w=208&h=208&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3", sizes: [3,4,5,6,7,8,9] },
+  { id: 9, name: "Nike Air force 1 variations" , price: 1200, image: "https://th.bing.com/th/id/OIP.dNUcSBEdmoIYmV_7IlbuRwHaHa?w=161&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3", sizes: [3,4,5,6,7,8,9] },
+  { id: 10, name: "Adidas Samba" , price: 1200, image: "https://th.bing.com/th/id/OIP.H34YhbD1BjzAFvqiFGv2XQHaE7?w=321&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3", sizes: [3,4,5,6,7,8,9] },
+  { id: 11, name: "Adidas campus" , price: 1200, image: "https://th.bing.com/th/id/OIP.sVLfA_Ttw_pk44kuRhTGIwHaIi?w=143&h=150&c=6&o=7&dpr=1.3&pid=1.7&rm=3", sizes: [3,4,5,6,7,8,9] },
+  { id: 12, name: "Nike air max portal" , price: 1200, image: "https://th.bing.com/th/id/OIP.qsTmWLcRGXrw1QbQsZ4rWAHaJQ?w=208&h=260&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3", sizes: [3,4,5,6,7,8,9] },
+  { id: 13, name: "Lacoste T-Clip Winter Mid Trainer" , price: 1200, image: "https://th.bing.com/th/id/OIP.hsb8nSOetXfzQ346AQZwDwHaHa?w=212&h=213&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3", sizes: [6,7,8,9,10] },
+  { id: 14, name: "Karl largerfield kapri ikonik" , price: 1250, image: "https://th.bing.com/th/id/OIP.EXwSnW-6U6tlrkQ7Ic0gvAHaJ4?w=208&h=277&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3", sizes: [3,4,5,6,7,8,9] },
+  { id: 15, name: "New Balance 530" , price: 1200, image: "https://th.bing.com/th/id/OIP.uJVaREAH-eGuNKHnC59PJwHaHa?w=187&h=187&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3", sizes: [3,4,5,6,7,8,9] },
+  { id: 16, name: "Reebok Legacy" , price: 1200, image: "https://th.bing.com/th?q=Reebok+Classic+Leather+Legacy&w=120&h=120&c=1&rs=1&qlt=70&o=7&cb=1&dpr=1.3&pid=InlineBlock&rm=3&mkt=en-ZA&cc=ZA&setlang=en&adlt=moderate&t=1&mw=247", sizes: [3,4,5,6,7,8,9] },
+  { id: 17, name: "Jordan 1 high" , price: 1200, image: "https://th.bing.com/th/id/OIP.ABJaMuHbqD-U89hd2ct8FgHaJJ?w=132&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3", sizes: [3,4,5,6,7,8,9] },
+  { id: 18, name: "Nike Air Max Cortez 95" , price: 1200, image: "https://th.bing.com/th/id/OIP.I4MvPDKfCiWPfr0uOGjTMAHaE8?w=332&h=181&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" , sizes: [3,4,5,6,7,8,9] },
+  { id: 19, name: "Nike Air Force 1 Black" , price: 1000, image: "https://th.bing.com/th/id/OIP.EM-8e5CY4bxh4mpgQGk9EwHaFN?w=335&h=190&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" , sizes: [3,4,5,6,7,8,9] },
+  { id: 20, name: "Nike Air Max 1" , price: 1200, image: "https://th.bing.com/th/id/OIP.9UP0suxw-wx_UdqTsu_isAHaFM?w=282&h=198&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" , sizes: [3,4,5,6,7,8,9] },
+  { id: 21, name: "New Balance 740" , price: 1200, image: "https://th.bing.com/th/id/OIP._7YKNI0F3SwTr6R69KcXVQHaFL?w=219&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" , sizes: [3,4,5,6,7,8,9] },
+  { id: 22, name: "Leather Converse Chuck Taylor" , price: 1200, image: "https://th.bing.com/th/id/OIP.XvXDegcHy2fXI3DV93jZhQHaEe?w=279&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" , sizes: [3,4,5,6,7,8,9] },
+  { id: 23, name: "Lacoste Courtcage Set" , price: 1200, image: "https://th.bing.com/th/id/OIP._Qx25Ceojcddf-AZawzaOgHaHa?w=179&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3", sizes: [3,4,5,6,7,8,9] },
+  { id: 24, name: "Puma Bella V2" , price: 1200, image: "https://th.bing.com/th/id/OIP.h58gUbK9uyp02NQaw7WV6AHaC3?w=316&h=135&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" , sizes: [3,4,5,6,7,8,9] },
+  { id: 25, name: "New Balance 550" , price: 1200, image: "https://th.bing.com/th/id/OIP.GTKeZcbdJdyaNIfjk2yugQHaFM?w=243&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" , sizes: [3,4,5,6,7,8,9] },
+  { id: 26, name: "Men`s Lacoste T-Clip" , price: 1200, image: "https://th.bing.com/th/id/OIP.S_m4m1agz_fj52ePsG_VSgHaFj?w=261&h=196&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" , sizes: [3,4,5,6,7,8,9] },
+  { id: 27, name: "Lacoste Audyssor Trail" , price: 1200, image: "https://th.bing.com/th/id/OIP.QcVeaDD0fhFzYHR46NJzXAHaF7?w=252&h=201&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" , sizes: [3,4,5,6,7,8,9] },
+  { id: 28, name: "New Balance 1000" , price: 1200, image: "https://th.bing.com/th/id/OIP.GLSvefsl021WIwWtA-QYpgHaE8?w=231&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" , sizes: [3,4,5,6,7,8,9] },
+  { id: 29, name: "Nike Air Max SNDR" , price: 1200, image: "https://th.bing.com/th/id/OIP.aoe2p7vCYLfoj1O4c0IvRAHaHe?w=208&h=211&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" , sizes: [3,4,5,6,7,8,9] },
+  { id: 30, name: "Nike Vomero 18" , price: 1200, image: "https://th.bing.com/th/id/OIP.u9fAGjxtycSAsety3yphBgHaJQ?w=208&h=260&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" , sizes: [3,4,5,6,7,8,9] },
+  { id: 31, name: "Jordan 1 low" , price: 1200, image: "https://th.bing.com/th/id/OIP.JdsFFzp1oJWpLKloiXgy6wHaIz?w=173&h=206&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" , sizes: [3,4,5,6,7,8,9] },
+  { id: 32, name: "Jordan 4 retro" , price: 1200, image: "https://th.bing.com/th/id/OIP.s3380sJ0ZnTyTrLpqxVkcAHaET?w=292&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" , sizes: [3,4,5,6,7,8,9] },
+  { id: 33, name: "Adidas Spezial" , price: 1200, image: "https://th.bing.com/th/id/OIP.oq21vsqKFlrren9ARU9nzAHaF7?w=196&h=150&c=6&o=7&dpr=1.3&pid=1.7&rm=3" , sizes: [3,4,5,6,7,8,9] },
+  { id: 34, name: "Pharrell Williams x Adidas Adistar Jellyfish" , price: 1200, image: "https://th.bing.com/th/id/OIP.TsKjI3dQSJ1ZNoa604RZPAHaE6?w=293&h=193&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" , sizes: [3,4,5,6,7,8,9] },
+  { id: 35, name: "Nike air max Dn" , price: 1200, image: "https://th.bing.com/th/id/OIP.2CvP-ON_XdDNlsRsjowcYAHaJQ?w=208&h=260&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" , sizes: [3,4,5,6,7,8,9] },
+
+];
+
+let cart = [];
+
+function renderProducts() {
+  const container = document.getElementById("products");
+  container.innerHTML = "";
+
+  products.forEach(p => {
+    const div = document.createElement("div");
+    div.className = "card";
+
+    div.innerHTML = `
+      <img src="${p.image}">
+      <h3>${p.name}</h3>
+      <p>R ${p.price}</p>
+      <select id="size-${p.id}">
+        <option value="">Select Size</option>
+        ${p.sizes.map(s => `<option value="${s}">UK ${s}</option>`).join("")}
+      </select>
+      <button onclick="addToCart(${p.id})">Add to Cart</button>
+    `;
+
+    container.appendChild(div);
+  });
+}
+
+function addToCart(id) {
+  const product = products.find(p => p.id === id);
+  const size = document.getElementById(`size-${id}`).value;
+
+  if (!size) {
+    alert("Select size first");
+    return;
+  }
+
+  cart.push({ ...product, size });
+  renderCart();
+}
+
+function renderCart() {
+  const container = document.getElementById("cartItems");
+  const totalEl = document.getElementById("total");
+
+  container.innerHTML = "";
+  let total = 0;
+
+  cart.forEach((item, i) => {
+    total += item.price;
+    container.innerHTML += `<p>${i+1}. ${item.name} (Size ${item.size}) - R ${item.price}</p>`;
+  });
+
+  totalEl.innerText = "Total: R " + total;
+  updateWhatsApp(total);
+}
+
+function updateWhatsApp(total) {
+  const customer = document.getElementById("customerNumber").value;
+
+  let message = "Hello, I would like to order:%0A%0A";
+
+  cart.forEach((item, i) => {
+    message += `${i+1}. ${item.name} (Size ${item.size}) - R ${item.price}%0A`;
+  });
+
+  message += `%0ATotal: R ${total}%0A`;
+
+  if (customer) {
+    message += `%0ACustomer Number: ${customer}%0A`;
+  }
+
+  const link = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
+  document.getElementById("checkoutBtn").href = link;
+}
+
+renderProducts();
+</script>
+
+</body>
+</html>
